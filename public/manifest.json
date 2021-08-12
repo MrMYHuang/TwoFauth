@@ -1,0 +1,22 @@
+{
+  "short_name": "TwoFauth",
+  "name": "TwoFauth",
+  "icons": [
+    {
+      "src": "assets/icon/icon.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
+    },
+    {
+      "src": "assets/icon/icon.png",
+      "type": "image/png",
+      "sizes": "1024x1024",
+      "purpose": "maskable"
+    }
+  ],
+  "scope": "/TwoFauth/",
+  "start_url": "/TwoFauth/",
+  "display": "standalone",
+  "theme_color": "black",
+  "background_color": "black"
+}

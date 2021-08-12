@@ -1,0 +1,7 @@
+{
+  "name": "TwoFauth",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
