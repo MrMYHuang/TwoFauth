@@ -1,6 +1,6 @@
 {
-  "short_name": "TwoFauth",
-  "name": "TwoFauth",
+  "short_name": "雙重驗證",
+  "name": "雙重驗證",
   "icons": [
     {
       "src": "assets/icon/icon.png",

@@ -55,11 +55,6 @@ class _ListPage extends React.Component<PageProps, State> {
 
   ionViewWillEnter() {
     //console.log(`${this.props.match.url} will enter`);
-
-    const bookmark0 = this.props.settings.bookmarks[0];
-    if (bookmark0) {
-    }
-
     this.tokenUpdateTimer = setInterval(() => {
       this.setState({
         tokens: this.props.settings.bookmarks.map(
@@ -68,6 +63,12 @@ class _ListPage extends React.Component<PageProps, State> {
         remainingTime: 30 - (new Date().getSeconds() % 30),
       });
     }, 40);
+  }
+
+  ionViewDidLeave() {
+    if (this.tokenUpdateTimer != null) {
+      clearInterval(this.tokenUpdateTimer);
+    }
   }
 
   reorderBookmarks(event: CustomEvent<ItemReorderEventDetail>) {
