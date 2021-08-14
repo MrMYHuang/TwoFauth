@@ -141,11 +141,10 @@ async function getCurrentPosition() {
   });
 }
 
-function isWKWebView() {
-  return webkit.messageHandlers?.swiftCallbackHandler != null;
-}
-
 const webkit = (window as any).webkit;
+function isWKWebView() {
+  return webkit?.messageHandlers?.swiftCallbackHandler != null;
+}
 
 let isRequestingCamera = false;
 let cameraResultCode = 0;
