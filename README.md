@@ -65,6 +65,8 @@ https://myhpwa.github.io/TwoFauth
 1. iOS Safari 13.4以上才支援"分享此頁"功能。
 
 ## <a id='history'>版本歷史</a>
+* 1.1.1:
+  * 修正匯入設定後，扇形動畫沒出現的問題。
 * 1.1.0:
   * OTP 倒數改用扇形動畫表示。
 * 1.0.1:

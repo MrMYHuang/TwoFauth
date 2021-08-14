@@ -30,7 +30,6 @@ interface PageProps extends Props, RouteComponentProps<{
 
 interface State {
   showScanQrCodeModal: boolean;
-  remainingTime: number;
   tokens: string[];
   reorder: boolean;
   showToast: boolean;
@@ -45,7 +44,6 @@ class _ListPage extends React.Component<PageProps, State> {
     super(props);
     this.state = {
       showScanQrCodeModal: false,
-      remainingTime: 0,
       tokens: [],
       reorder: false,
       showToast: false,
@@ -60,13 +58,6 @@ class _ListPage extends React.Component<PageProps, State> {
   height = 30;
   meter: d3.Selection<SVGPathElement, unknown, HTMLElement, any> | undefined;
   arc = d3.arc<number>().startAngle(0).endAngle(twoPi).innerRadius(0).outerRadius(this.width / 2);
-  componentDidMount() {
-    if (this.meter != null) {
-      return;
-    }
-
-    this.createProgressCircles();
-  }
 
   createProgressCircles() {    
     d3.selectAll('.progressCircle').selectChildren().remove();
@@ -86,15 +77,17 @@ class _ListPage extends React.Component<PageProps, State> {
 
     this.tokenUpdateTimer = setInterval(() => {
       const currTime = (new Date().getSeconds() % 30);
-      const remainingTime = 30 - currTime;
       this.setState({
         tokens: this.props.settings.bookmarks.map(
           b => authenticator.generateToken(b.secret).replace(/(.{3})/g, '$1 ')
         ),
-        remainingTime: remainingTime,
       });
       this.meter?.attr('d', this.arc.startAngle(twoPi * currTime / 30)(0));
     }, 40);
+  }
+
+  ionViewDidEnter() {
+    this.createProgressCircles();
   }
 
   ionViewDidLeave() {
