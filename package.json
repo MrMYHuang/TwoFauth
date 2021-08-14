@@ -2,7 +2,7 @@
   "name": "TwoFauth",
   "homepage": "/TwoFauth",
   "productName": "雙重驗證",
-  "pwaVersion": "1.1.2",
+  "pwaVersion": "1.1.4",
   "version": "1.0.0",
   "license": "MIT",
   "keywords": [

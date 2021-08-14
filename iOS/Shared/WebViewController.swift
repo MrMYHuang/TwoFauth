@@ -9,6 +9,7 @@ import SwiftUI
 import UIKit
 import WebKit
 import SnapKit
+import AVFoundation
 
 struct WebViewControllerWrap: UIViewControllerRepresentable {
     
@@ -24,7 +25,7 @@ class WebViewController: UIViewController {
     
     let jsonUriPrefix = "data:text/json;charset=utf-8,"
     #if DEBUG
-    let baseURL = URL(string: "http://localhost:3000/TwoFauth")!
+    let baseURL = URL(string: "http://192.168.0.23:3000/TwoFauth")!
     #else
     let baseURL = URL(string: "https://myhpwa.github.io/TwoFauth")!
     #endif
@@ -32,28 +33,39 @@ class WebViewController: UIViewController {
     let contentController = WKUserContentController();
     let swiftCallbackHandler = "swiftCallbackHandler"
     
-    lazy var webView: WKWebView = {
-        let preferences = WKPreferences()
-        preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
+    var webView: WKWebView?
+    func loadWebView() {
+        webView = {
+            let preferences = WKPreferences()
+            preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
+            
+            let configuration = WKWebViewConfiguration()
+            configuration.preferences = preferences
+            configuration.defaultWebpagePreferences.allowsContentJavaScript = true
+            configuration.limitsNavigationsToAppBoundDomains = true
+            configuration.userContentController = contentController
+            
+            let webView = WKWebView(frame: .zero, configuration: configuration)
+            webView.navigationDelegate = self
+            webView.uiDelegate = self
+            webView.scrollView.contentInsetAdjustmentBehavior = .never
+            
+            let websiteDataTypes = NSSet(array: [WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeMemoryCache])
+            let date = NSDate(timeIntervalSince1970: 0)
+            
+            WKWebsiteDataStore.default().removeData(ofTypes: websiteDataTypes as! Set<String>, modifiedSince: date as Date, completionHandler:{ })
+            
+            return webView
+        }()
         
-        let configuration = WKWebViewConfiguration()
-        configuration.preferences = preferences
-        configuration.defaultWebpagePreferences.allowsContentJavaScript = true
-        configuration.limitsNavigationsToAppBoundDomains = true
-        configuration.userContentController = contentController
-        
-        let webView = WKWebView(frame: .zero, configuration: configuration)
-        webView.navigationDelegate = self
-        webView.uiDelegate = self
-        webView.scrollView.contentInsetAdjustmentBehavior = .never
-        
-        let websiteDataTypes = NSSet(array: [WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeMemoryCache])
-        let date = NSDate(timeIntervalSince1970: 0)
-        
-        WKWebsiteDataStore.default().removeData(ofTypes: websiteDataTypes as! Set<String>, modifiedSince: date as Date, completionHandler:{ })
-        
-        return webView
-    }()
+        view.addSubview(webView!)
+        webView?.snp.makeConstraints {
+            //$0.edges.equalToSuperview()
+            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.topMargin)
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+        webView?.load(URLRequest(url: baseURL))
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -62,13 +74,14 @@ class WebViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         contentController.add(self, name: swiftCallbackHandler)
-        view.addSubview(webView)
-        webView.snp.makeConstraints {
-            //$0.edges.equalToSuperview()
-            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.topMargin)
-            $0.leading.trailing.bottom.equalToSuperview()
+        
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            if granted {
+                DispatchQueue.main.async {
+                    self.loadWebView()
+                }
+            }
         }
-        webView.load(URLRequest(url: baseURL))
     }
     
     var fileURL: URL?
@@ -84,6 +97,12 @@ class WebViewController: UIViewController {
             catch {/* error handling here */}
         }
     }
+    
+    func requestCameraResult(code: Int) {
+        DispatchQueue.main.async {
+            self.webView?.evaluateJavaScript("CameraResultCallback(\(code))", completionHandler: nil)
+        }
+    }
 }
 
 extension WebViewController: UIDocumentPickerDelegate {
@@ -97,9 +116,35 @@ extension WebViewController: WKScriptMessageHandler {
         guard let dict = message.body as? Dictionary<String, Any> else { return }
         guard let event = dict["event"] as? String else { return }
         
-        if(event == "copy") {
+        switch event {
+        case "copy":
             let text = dict["text"] as? String ?? ""
             UIPasteboard.general.string = text
+        case "camera":
+            switch AVCaptureDevice.authorizationStatus(for: .video) {
+                case .authorized: // The user has previously granted access to the camera.
+                    requestCameraResult(code: 0)
+                    break
+                
+                case .notDetermined: // The user has not yet been asked for camera access.
+                    AVCaptureDevice.requestAccess(for: .video) { granted in
+                        if granted {
+                            self.requestCameraResult(code: 0)
+                        }
+                    }
+                
+                case .denied: // The user has previously denied access.
+                    self.requestCameraResult(code: 1)
+                    return
+
+                case .restricted: // The user can't grant access due to restrictions.
+                    self.requestCameraResult(code: 1)
+                    return
+            @unknown default:
+                fatalError()
+            }
+        default:
+            break
         }
     }
 }

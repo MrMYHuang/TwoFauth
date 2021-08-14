@@ -141,14 +141,48 @@ async function getCurrentPosition() {
   });
 }
 
+function isWKWebView() {
+  return webkit.messageHandlers?.swiftCallbackHandler != null;
+}
+
+const webkit = (window as any).webkit;
+
+let isRequestingCamera = false;
+let cameraResultCode = 0;
+(window as any).CameraResultCallback = (code: number) => {
+  cameraResultCode = code;
+  isRequestingCamera = false;
+}
+
 async function loadCamera() {
   try {
+    if (isWKWebView()) {
+      await new Promise<void>(async (ok, fail) => {
+        isRequestingCamera = true;
+        webkit.messageHandlers.swiftCallbackHandler.postMessage({
+          event: 'camera'
+        });
+
+        const timer = setInterval(() => {
+          if (!isRequestingCamera) {
+            clearInterval(timer);
+
+            if (cameraResultCode) {
+              fail();
+            } else {
+              ok();
+            }
+          }
+        }, 500);
+      });
+    }
+
     return await navigator.mediaDevices.getUserMedia({
       video: { width: 720, height: 1280, facingMode: 'environment' }
     });
   } catch (error) {
     console.error(error);
-    throw (error);
+    throw(error);
   }
 }
 
@@ -206,7 +240,6 @@ function disableIosSafariCallout(this: Window, event: any) {
   }
 }
 
-//const webkit = (window as any).webkit;
 function copyToClipboard(text: string) {
   try {
     navigator.clipboard && navigator.clipboard.writeText(text);
@@ -267,6 +300,7 @@ const Globals = {
   isStoreApps: () => {
     return isPlatform('pwa') || isPlatform('electron');
   },
+  isWKWebView,
   getFileFromIndexedDB,
   saveFileToIndexedDB,
   removeFileFromIndexedDB,

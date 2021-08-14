@@ -65,6 +65,10 @@ https://myhpwa.github.io/TwoFauth
 1. iOS Safari 13.4以上才支援"分享此頁"功能。
 
 ## <a id='history'>版本歷史</a>
+* 1.1.4:
+  * 修正 iOS app 存取相機權限問題。
+* 1.1.3:
+  * 修正 iOS app 存取相機權限問題。
 * 1.1.2:
   * 移除 app 中不必要的外部連結，避免送審商店遇到問題。
 * 1.1.1:
