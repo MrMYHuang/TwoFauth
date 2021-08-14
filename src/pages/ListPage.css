@@ -1,3 +1,7 @@
 .listItem {
     flex-direction: column;
 }
+
+.progressCircleMeter {
+    fill: var(--ion-color-primary);
+}

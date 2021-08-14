@@ -5,6 +5,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import authenticator from 'authenticator';
+import * as d3 from 'd3';
 
 import { Settings } from '../models/Settings';
 import { TmpSettings } from '../models/TmpSettings';
@@ -13,6 +14,8 @@ import { Bookmark } from '../models/Bookmark';
 import { add, swapVertical } from 'ionicons/icons';
 import ScanQrCodeModal from '../components/ScanQrCodeModal';
 import Globals from '../Globals';
+
+const twoPi = 2 * Math.PI;
 
 interface Props {
   dispatch: Function;
@@ -53,15 +56,44 @@ class _ListPage extends React.Component<PageProps, State> {
     this.bookmarkListRef = React.createRef<HTMLIonListElement>();
   }
 
+  width = 30;
+  height = 30;
+  meter: d3.Selection<SVGPathElement, unknown, HTMLElement, any> | undefined;
+  arc = d3.arc<number>().startAngle(0).endAngle(twoPi).innerRadius(0).outerRadius(this.width / 2);
+  componentDidMount() {
+    if (this.meter != null) {
+      return;
+    }
+
+    this.createProgressCircles();
+  }
+
+  createProgressCircles() {    
+    d3.selectAll('.progressCircle').selectChildren().remove();
+    const g = d3.selectAll('.progressCircle')
+      .append('svg')
+      .attr('width', this.width)
+      .attr('height', this.height)
+      .append('g')
+      .attr('transform', `translate(${this.width / 2}, ${this.height / 2})`);
+
+    this.meter = g.append('path')
+      .attr('class', 'progressCircleMeter');
+  }
+
   ionViewWillEnter() {
     //console.log(`${this.props.match.url} will enter`);
+
     this.tokenUpdateTimer = setInterval(() => {
+      const currTime = (new Date().getSeconds() % 30);
+      const remainingTime = 30 - currTime;
       this.setState({
         tokens: this.props.settings.bookmarks.map(
           b => authenticator.generateToken(b.secret).replace(/(.{3})/g, '$1 ')
         ),
-        remainingTime: 30 - (new Date().getSeconds() % 30),
+        remainingTime: remainingTime,
       });
+      this.meter?.attr('d', this.arc.startAngle(twoPi * currTime / 30)(0));
     }, 40);
   }
 
@@ -92,22 +124,19 @@ class _ListPage extends React.Component<PageProps, State> {
               this.setState({ showToast: true, toastMessage: `複製 OTP 成功` })
             }}>
             <div tabIndex={0}></div>{/* Workaround for macOS Safari 14 bug. */}
-            <IonLabel slot='start'>
-              <div className='listItem'>
-                <div>
-                  <IonLabel className='ion-text-wrap uiFont'>
-                    {item.issuer} ({item.account})
-                  </IonLabel>
-                </div>
-                <div>
-                  <IonLabel color='primary' className='ion-text-wrap uiFontX1_5' key={`bookmarkItemLabel_` + index}>
-                    {token}
-                  </IonLabel>
-                </div>
+            <div className='listItem'>
+              <div>
+                <IonLabel className='ion-text-wrap uiFont'>
+                  {item.issuer} ({item.account})
+                </IonLabel>
               </div>
-            </IonLabel>
-            <IonLabel slot='end' className='ion-text-wrap uiFontX1_5' style={{ textAlign: 'center' }} key={`bookmarkItemLabel_` + index}>
-              {this.state.remainingTime}s
+              <div>
+                <IonLabel color='primary' className='ion-text-wrap uiFontX1_5' key={`bookmarkItemLabel_` + index}>
+                  {token}
+                </IonLabel>
+              </div>
+            </div>
+            <IonLabel className='ion-text-wrap uiFontX1_5 progressCircle' style={{ textAlign: 'right' }} key={`bookmarkItemLabel_` + index}>
             </IonLabel>
             <IonReorder slot='end' />
           </IonItem>
@@ -183,6 +212,8 @@ class _ListPage extends React.Component<PageProps, State> {
                     secret,
                   }),
                 });
+                
+                this.createProgressCircles();
               }, ...this.props
             }}
           />
