@@ -8,7 +8,10 @@
   "icon": "buildElectron/icon.icns",
   "mac": {
     "type": "development",
-    "identity": null
+    "identity": null,
+    "extendInfo": {
+      "NSCameraUsageDescription": "此 app 須要您授權相機權限以掃描 QR code，且不會作任何資料收集的目的。"
+    }
   },
   "masDev": {
     "type": "development",
