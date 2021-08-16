@@ -267,3 +267,4 @@ buildElectron/*.map
 *.xcbkptlist
 *.xcuserdatad
 *.DS_Store
+dist
