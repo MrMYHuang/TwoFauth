@@ -268,3 +268,6 @@ buildElectron/*.map
 *.xcuserdatad
 *.DS_Store
 dist
+android
+win
+*.provisionprofile
