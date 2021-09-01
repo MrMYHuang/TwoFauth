@@ -1,50 +1,10 @@
 import { isPlatform, IonLabel } from '@ionic/react';
-import fs from 'fs';
-import AdmZip from 'adm-zip';
-import parse from 'csv-parse/lib/sync';
-import { DownloaderHelper, Stats } from 'node-downloader-helper';
 
 const pwaUrl = process.env.PUBLIC_URL || '';
-let freeChargingUrl = `https://myhdata.s3.ap-northeast-1.amazonaws.com/charge_station_list.zip`;
-let freeWifiUrl = `https://myhdata.s3.ap-northeast-1.amazonaws.com/hotspotlist.zip`;
+const bugReportApiUrl = 'https://vh6ud1o56g.execute-api.ap-northeast-1.amazonaws.com/bugReportMailer';
 
 const TwoFauthDb = 'TwoFauthDb';
-const freeChargingDataKey = 'freeCharging';
-const freeWifiDataKey = 'freeWifi';
 let log = '';
-
-async function downloadCsvZipData(url: string, progressCallback: Function) {
-  let dataBuffer = await downloadData(url, progressCallback);
-  const zip = new AdmZip(dataBuffer);
-  let dataStr = zip.getEntries()[0].getData().toString('utf8');
-  return parse(dataStr, {
-    columns: true,
-    bom: dataStr.charCodeAt(0) === 0xFEFF,
-  });
-}
-
-async function downloadData(url: string, progressCallback: Function) {
-  return new Promise<Buffer>((ok, fail) => {
-    const dl = new DownloaderHelper(url, '.', {});
-    let progressUpdateEnable = true;
-    dl.on('progress', (stats: Stats) => {
-      if (progressUpdateEnable) {
-        // Reduce number of this calls by progressUpdateEnable.
-        // Too many of this calls could result in 'end' event callback is executed before 'progress' event callbacks!
-        progressCallback(stats.progress);
-        progressUpdateEnable = false;
-        setTimeout(() => {
-          progressUpdateEnable = true;
-        }, 100);
-      }
-    });
-    dl.on('end', (downloadInfo: any) => {
-      dl.removeAllListeners();
-      ok(fs.readFileSync(downloadInfo.filePath));
-    });
-    dl.start();
-  });
-}
 
 async function getFileFromIndexedDB(fileName: string) {
   const dbOpenReq = indexedDB.open(TwoFauthDb);
@@ -253,18 +213,14 @@ function isMacCatalyst() {
 
 const Globals = {
   pwaUrl,
+  bugReportApiUrl,
   storeFile: 'TwoFauthSettings.json',
-  downloadCsvZipData,
   getCurrentPosition,
   loadCamera,
   getLog,
   enableAppLog,
   disableAppLog,
   TwoFauthDb,
-  freeResources: [
-    { item: "離線免費充電資料", dataKey: freeChargingDataKey, url: freeChargingUrl },
-    { item: "離線免費 WiFi 資料", dataKey: freeWifiDataKey, url: freeWifiUrl },
-  ],
   appSettings: {
     'theme': '佈景主題',
     'uiFontSize': 'UI字型大小',
