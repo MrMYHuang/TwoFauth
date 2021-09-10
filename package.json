@@ -11,7 +11,7 @@
     "Progressive Web App",
     "PWA"
   ],
-  "description": "A two factor ahtneticator PWA",
+  "description": "A two factor authenticator PWA",
   "repository": "https://github.com/MrMYHuang/TwoFauth",
   "author": {
     "name": "Meng-Yuan Huang",
