@@ -16,6 +16,11 @@
   ],
   "scope": "/TwoFauth/",
   "start_url": "/TwoFauth/",
+  "url_handlers": [
+    {
+      "origin": "https://myhpwa.github.io/TwoFauth/"
+    }
+  ],
   "display": "standalone",
   "theme_color": "black",
   "background_color": "black"
