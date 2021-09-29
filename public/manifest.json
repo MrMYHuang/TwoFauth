@@ -18,7 +18,7 @@
   "start_url": "/TwoFauth/",
   "url_handlers": [
     {
-      "origin": "https://myhpwa.github.io/TwoFauth/"
+      "origin": "https://myhpwa.github.io"
     }
   ],
   "display": "standalone",
