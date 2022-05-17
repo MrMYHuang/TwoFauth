@@ -91,6 +91,9 @@ https://myhpwa.github.io/TwoFauth
 1. iOS Safari 13.4以上才支援"分享此頁"功能。
 
 ## <a id='history'>版本歷史</a>
+* PWA 1.3.2:
+  * [修正] 網址分享在新電腦開啟異常。
+  * [修正] setState, dispatch 相關狀態更新 bugs。
 * iOS 1.0.2:
   * [修正] 匯出設定預設檔名。
 * PWA 1.3.0:
