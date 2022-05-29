@@ -2,8 +2,8 @@
   "name": "TwoFauth",
   "homepage": "/TwoFauth",
   "productName": "雙重驗證",
-  "pwaVersion": "1.3.2",
-  "version": "1.1.0",
+  "pwaVersion": "1.4.0",
+  "version": "1.2.0",
   "license": "MIT",
   "keywords": [
     "Two Factor Authenticator",
@@ -23,7 +23,6 @@
   ],
   "main": "buildElectron/main.js",
   "scripts": {
-    "postinstall": "electron-builder install-app-deps",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build && powershell -file CopyBuild.ps1",
     "build_linux": "react-app-rewired build && ./CopyBuild.sh",
