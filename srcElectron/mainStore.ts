@@ -1,8 +1,14 @@
 // Modules to control application life and create native browser window
 import { app, BrowserWindow, dialog, ipcMain, Menu, MenuItem, shell } from 'electron';
+import Globals from './Globals';
 const windowStateKeeper = require('electron-window-state');
 const path = require('path');
 const PackageInfos = require('../package.json');
+
+// Workaround an issue of Linux wmclass not supporting the UTF-8 productName in package.json.
+if (process.platform === 'linux') {
+  app.setName(PackageInfos.name);
+}
 
 app.commandLine.appendSwitch('ignore-certificate-errors', 'true');
 let mainWindow: BrowserWindow | null | undefined;
@@ -51,30 +57,34 @@ const template = [
     ]
   }),
   new MenuItem({
-    label: '顯示',
-    submenu: [
-      {
-        role: 'togglefullscreen',
-        label: '全螢幕',
-      },
-      {
-        role: 'toggleDevTools',
-        label: '開發者工具',
-      },
-    ]
-  }),
-  new MenuItem({
     label: '執行',
     submenu: [
       {
         role: 'forceReload',
         label: '強制重新載入',
       },
-    ]
+      {
+        role: 'toggleDevTools',
+        label: '開發者工具',
+        visible: false,
+      },
+    ].filter(v => v != null) as any
   }),
   new MenuItem({
     label: '視窗',
     submenu: [
+      {
+        role: 'togglefullscreen',
+        label: '全螢幕',
+      },
+      {
+        label: '離開全螢幕',
+        accelerator: 'Esc',
+        visible: false,
+        click: (item: MenuItem, win: (BrowserWindow) | (undefined)) => {
+          win?.setFullScreen(false);
+        },
+      },
       {
         label: '最小化',
         role: 'minimize'
@@ -111,7 +121,6 @@ async function createWindow() {
     'height': mainWindowState.height,
     webPreferences: {
       contextIsolation: true, // protect against prototype pollution
-      enableRemoteModule: false, // turn off remote
       preload: path.join(__dirname, 'preload.js'),
     }
   });
@@ -151,9 +160,9 @@ async function createWindow() {
 
         try {
           if (isDevMode()) {
-            await mainWindow!.loadURL('http://localhost:3000/TwoFauth');
+            await mainWindow!.loadURL(Globals.devUrl);
           } else {
-            await mainWindow!.loadURL('https://myhpwa.github.io/TwoFauth');
+            await mainWindow!.loadURL(Globals.pwaUrl);
           }
         } catch (error) {
           fail(error);
@@ -174,10 +183,10 @@ async function createWindow() {
   }
 
   // Open web link by external browser.
-  mainWindow?.webContents.on('new-window', function(event, url) {
-    event.preventDefault();
-    shell.openExternal(url);
- });
+  mainWindow?.webContents.setWindowOpenHandler((detail) => {
+    shell.openExternal(detail.url);
+    return { action: 'deny' };
+  });
 }
 
 // This method will be called when Electron has finished

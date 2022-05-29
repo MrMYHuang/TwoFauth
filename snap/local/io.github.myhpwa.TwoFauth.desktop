@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=雙重驗證
+GenericName=雙重驗證
+Exec=two-fauth/two-fauth --no-sandbox
+Icon=${SNAP}/meta/gui/icon.png
+Type=Application
+Terminal=false
+Categories=Utilities;
+StartupWMClass=TwoFauth

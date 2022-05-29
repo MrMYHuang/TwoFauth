@@ -1,0 +1,23 @@
+{
+  "appId": "io.github.myhpwa.TwoFauth",
+  "files": [
+    "buildElectron/**/*",
+    "package.json"
+  ],
+  "icon": "buildElectron/icon.icns",
+  "linux": {
+    "artifactName": "${name}_${version}_linux_${arch}.${ext}",
+    "desktop": {
+      "StartupWMClass": "TwoFauth"
+    },
+    "category": "Utilities"
+  },
+  "mac": {
+    "mergeASARs": false,
+    "category": "public.app-category.utilities",
+    "minimumSystemVersion": "10.11",
+    "extendInfo": {
+      "NSCameraUsageDescription": "此 app 須要您授權相機權限以掃描 QR code，且不會作任何資料收集的目的。"
+    }
+  }
+}

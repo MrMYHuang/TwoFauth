@@ -1,7 +1,6 @@
 import React from 'react';
 import { Redirect, Route, RouteComponentProps, withRouter } from 'react-router-dom';
 import {
-  setupConfig,
   IonApp,
   IonIcon,
   IonRouterOutlet,
@@ -11,6 +10,7 @@ import {
   IonAlert,
   isPlatform,
   IonToast,
+  setupIonicReact,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { connect, Provider } from 'react-redux';
@@ -61,7 +61,7 @@ class DebugRouter extends IonReactRouter {
 }
 */
 
-setupConfig({
+setupIonicReact({
   mode: 'md', // Use a consistent UI style across Android and iOS.
   swipeBackEnabled: false,
 });
@@ -118,7 +118,7 @@ class _AppOrig extends React.Component<AppOrigProps, State> {
     electronBackendApi?.receive("fromMain", (data: any) => {
       switch (data.event) {
         case 'version':
-          store.dispatch({
+          this.props.dispatch({
             type: "TMP_SET_KEY_VAL",
             key: 'mainVersion',
             val: data.version,
@@ -156,9 +156,9 @@ class _AppOrig extends React.Component<AppOrigProps, State> {
         });
       });
     }
-    setImmediate(() => {
+    setTimeout(() => {
       Globals.updateCssVars(this.props.settings);
-    });
+    }, 0);
 
     this.state = {
       showUpdateAlert: false,
@@ -308,7 +308,7 @@ class _AppOrig extends React.Component<AppOrigProps, State> {
             text: this.props.shareTextModal?.text,
             showModal: this.props.shareTextModal?.show || false,
             finish: () => {
-              store.dispatch({
+              this.props.dispatch({
                 type: "TMP_SET_KEY_VAL",
                 key: 'shareTextModal',
                 val: { show: false },

@@ -1,24 +1,13 @@
 {
-  "extends": null,
-  "appId": "io.github.myhpwa.TwoFauth",
-  "files": [
-    "buildElectron/**/*",
-    "package.json"
-  ],
-  "icon": "buildElectron/icon.icns",
+  "extends": "electronBuilderConfigs/common.json",
   "mac": {
     "type": "distribution",
-    "identity": null,
-    "extendInfo": {
-      "NSCameraUsageDescription": "此 app 須要您授權相機權限以掃描 QR code，且不會作任何資料收集的目的。"
-    }
+    "identity": null
   },
   "mas": {
     "type": "distribution",
     "identity": "Meng-Yuan Huang",
-    "artifactName": "${name}_${version}_mas64.${ext}",
-    "category": "public.app-category.education",
-    "minimumSystemVersion": "10.10",
+    "artifactName": "${name}_${version}_mas.${ext}",
     "hardenedRuntime": false,
     "entitlements": "buildElectron/entitlements.mas.plist",
     "entitlementsInherit": "buildElectron/entitlements.mas.inherit.plist",

@@ -249,9 +249,9 @@ class _SettingsPage extends React.Component<PageProps, StateProps> {
                       key: 'uiFontSize',
                       val: +e.detail.value,
                     });
-                    setImmediate(() => {
+                    setTimeout(() => {
                       Globals.updateCssVars(this.props.settings);
-                    });
+                    }, 0);
                   }} />
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { IonContent, IonHeader, IonPage, IonToolbar, withIonLifeCycle, IonList, IonItem, IonLabel, IonToast, IonTitle, IonFab, IonFabButton, IonIcon, IonItemOptions, IonItemOption, IonItemSliding, IonReorderGroup, IonButton, IonReorder } from '@ionic/react';
 import { ItemReorderEventDetail } from '@ionic/core';
 import { RouteComponentProps } from 'react-router-dom';
@@ -105,7 +105,7 @@ class _ListPage extends React.Component<PageProps, State> {
   }
 
   getRows() {
-    let rows = Array<object>();
+    let rows = Array<ReactNode>();
     this.props.settings.bookmarks.forEach((item: Bookmark, index: number) => {
       const token = this.state.tokens[index];
       rows.push(
@@ -198,12 +198,12 @@ class _ListPage extends React.Component<PageProps, State> {
 
                 this.props.dispatch({
                   type: "ADD_BOOKMARK",
-                  bookmark: new Bookmark({
+                  bookmark: ({
                     uuid: uuidv4(),
                     issuer,
                     account,
                     secret,
-                  }),
+                  }) as Bookmark,
                 });
                 
                 this.createProgressCircles();
@@ -227,11 +227,11 @@ class _ListPage extends React.Component<PageProps, State> {
 const ListPage = withIonLifeCycle(_ListPage);
 
 const mapStateToProps = (state: any /*, ownProps*/) => {
-  return {
+  return JSON.parse(JSON.stringify({
     isLoadingData: state.tmpSettings.isLoadingData,
     tmpSettings: state.tmpSettings,
     settings: state.settings,
-  }
+  }));
 };
 
 //const mapDispatchToProps = {};

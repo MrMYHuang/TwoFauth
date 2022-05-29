@@ -4,9 +4,7 @@
     {
       "from": "electronBuilderConfigs",
       "to": ".",
-      "filter": [
-        "IsSnap.txt"
-      ]
+      "filter": ["IsAppImage.txt"]
     }
   ]
 }
