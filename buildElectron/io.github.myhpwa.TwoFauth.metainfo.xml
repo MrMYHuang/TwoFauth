@@ -2,13 +2,14 @@
 <component type="desktop-application">
   <id>io.github.myhpwa.TwoFauth</id>
   <name>雙重驗證</name>
-  <summary>查詢通過台灣食藥署許可藥品的資訊</summary>
+  <summary>掃描雙重驗證 QR code，生成一次性密碼 (OTP)</summary>
   <metadata_license>MIT</metadata_license>
   <project_license>MIT</project_license>
   <description>
     <p>
-    * 台灣水庫資訊 app 可查詢水利署提供的水庫最新蓄水資訊。
-    * 支援書籤功能、網址分享、佈景主題切換、字型調整、跨平台、無廣告、開放原始碼。
+      * 掃描、新增雙重驗證 QR code
+      * 生成一次性登入密碼 (one-time password, OTP)
+      * 佈景主題切換、字型調整、無廣告
     </p>
   </description>
   <url type="homepage">https://github.com/MrMYHuang/TwoFauth</url>

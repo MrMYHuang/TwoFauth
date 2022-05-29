@@ -1,5 +1,8 @@
 {
   "extends": "electronBuilderConfigs/common.json",
+  "extraMetadata": {
+    "name": "two-fauth"
+  },
   "extraResources": [
     {
       "from": "electronBuilderConfigs",
