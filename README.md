@@ -91,6 +91,9 @@ https://myhpwa.github.io/TwoFauth
 1. iOS Safari 13.4以上才支援"分享此頁"功能。
 
 ## <a id='history'>版本歷史</a>
+* PWA 1.4.2:
+  * [修正] Chrome 115 下拉選單顯示異常。
+
 * PWA 1.4.1:
   * [修正] Chrome 瀏覽器開啟自動中翻英後，app 功能異常的 bug。
 
