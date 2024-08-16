@@ -7,7 +7,7 @@ jobs:
   build-snap-amd64:
     <<: *defaults
     machine:
-      image: ubuntu-2004:202101-01
+      image: ubuntu-2004:current
     steps:
       - checkout
       - run: git submodule sync
@@ -16,6 +16,11 @@ jobs:
       - run:
           name: Build snap
           command: |
+            sudo apt update
+            sudo apt install -y snapd
+            sudo snap install lxd
+            sudo snap install --classic snapcraft
+            sudo lxd init --auto --storage-backend zfs
             npm run dist-snap
 
       - persist_to_workspace:
@@ -25,7 +30,7 @@ jobs:
   build-snap-arm64:
     <<: *defaults
     machine:
-      image: ubuntu-2004:202101-01
+      image: ubuntu-2004:current
     resource_class: arm.medium
     steps:
       - checkout
@@ -35,6 +40,11 @@ jobs:
       - run:
           name: Build snap
           command: |
+            sudo apt update
+            sudo apt install -y snapd
+            sudo snap install lxd
+            sudo snap install --classic snapcraft
+            sudo lxd init --auto --storage-backend zfs
             npm run dist-snap
 
       - persist_to_workspace:
@@ -44,7 +54,7 @@ jobs:
   publish:
     <<: *defaults
     machine:
-      image: ubuntu-2004:202101-01
+      image: ubuntu-2004:current
     steps:
       - checkout
 
@@ -52,20 +62,12 @@ jobs:
           at: ~/workspace
 
       - run:
-          name: Decrypt credentials
-          command: |
-            openssl aes-256-cbc -d \
-              -in .circleci/credentials.enc \
-              -out credentials \
-              -k $SNAPCRAFT_CREDENTIALS_KEY
-
-      - run:
-          name: Authenticate snapcraft
-          command: snapcraft login --with credentials
-
-      - run:
           name: Push/release snap
-          command: find dist -name "*.snap" | xargs -I {} snapcraft upload {} --release beta
+          command: |
+            sudo apt update
+            sudo apt install -y snapd
+            sudo snap install --classic snapcraft
+            find dist -name "*.snap" | xargs -I {} snapcraft upload {} --release beta
 
 workflows:
   version: 2
@@ -92,7 +94,7 @@ workflows:
               only: /^[vc][0-9]+.[0-9]+.[0-9]+$/
             branches:
               ignore: /.*/
-  test:
+  manual:
     jobs:
       - hold:
           type: approval

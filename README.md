@@ -91,6 +91,10 @@ https://myhpwa.github.io/TwoFauth
 1. iOS Safari 13.4以上才支援"分享此頁"功能。
 
 ## <a id='history'>版本歷史</a>
+* Snap apps 1.4.0:
+  * [修正] Snap 版匯入／匯出存取權限問題.
+  * [優化] 升級至 Electron 31.4.0。
+
 * PWA 1.4.2:
   * [修正] Chrome 115 下拉選單顯示異常。
 

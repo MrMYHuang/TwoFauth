@@ -271,3 +271,5 @@ dist
 android
 win
 *.provisionprofile
+and
+androidOld
