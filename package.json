@@ -3,7 +3,7 @@
   "homepage": "/TwoFauth",
   "productName": "雙重驗證",
   "pwaVersion": "1.5.0",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "license": "MIT",
   "keywords": [
     "Two Factor Authenticator",
